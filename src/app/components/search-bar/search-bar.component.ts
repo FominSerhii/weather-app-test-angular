@@ -1,9 +1,13 @@
-import { ChangeDetectionStrategy, Component, output, signal } from '@angular/core';
+import { 
+  ChangeDetectionStrategy, 
+  Component, 
+  output, 
+  signal 
+} from '@angular/core';
 
 @Component({
   selector: 'app-search-bar',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [],
   templateUrl: './search-bar.component.html',
   styleUrl: './search-bar.component.css'

@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject
+} from '@angular/core';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faFrown } from '@fortawesome/free-solid-svg-icons';
 
@@ -14,7 +19,6 @@ const MAX_SKELETONS = 5;
 
 @Component({
   selector: 'app-weather',
-  standalone: true,
   imports: [
     FaIconComponent,
     SearchBarComponent,
@@ -32,7 +36,15 @@ export class WeatherComponent {
   protected readonly store = inject(WeatherStore);
   protected readonly faFrown = faFrown;
 
-  protected readonly skeletons = computed(() =>
-    Array.from({ length: Math.min(this.store.pendingCount(), MAX_SKELETONS) }, (_, i) => i),
-  );
+  protected readonly skeletons = computed(() => {
+    const skeletonCount = Math.min(
+      this.store.pendingCount(),
+      MAX_SKELETONS,
+    );
+
+    return Array.from(
+      { length: skeletonCount },
+      (_, index) => index,
+    );
+  });
 }

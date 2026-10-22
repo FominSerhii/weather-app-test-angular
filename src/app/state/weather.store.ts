@@ -2,9 +2,9 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 
 import { CityNotFoundError, WeatherApiService } from '../services/weather-api.service';
 import {
-  GEOLOCATION_MESSAGES,
-  GeolocationError,
-  getCurrentCoordinates,
+    GEOLOCATION_MESSAGES,
+    GeolocationError,
+    getCurrentCoordinates,
 } from '../services/geolocation';
 import { Units } from '../types/units';
 import { WeatherResponse } from '../types/weather-response';
@@ -16,107 +16,121 @@ const SERVICE_ERROR = 'Weather service error. Check your API key or connection.'
 
 @Injectable({ providedIn: 'root' })
 export class WeatherStore {
-  private readonly api = inject(WeatherApiService);
+    private readonly api = inject(WeatherApiService);
 
-  // ---- state (was WeatherState) ----
-  private readonly raw = signal<WeatherResponse[]>([]);
-  readonly loading = signal(false);
-  readonly failed = signal<string[]>([]);
-  readonly error = signal<string | null>(null);
-  readonly pendingCount = signal(0);
-  readonly units = signal<Units>(loadUnits());
+    private readonly raw = signal<WeatherResponse[]>([]);
 
-  // ---- selectors (was createSelector) ----
-  readonly cities = computed(() =>
-    this.raw().map((r) => toCityWeatherProps(r, this.units())),
-  );
+    readonly loading = signal(false);
+    readonly failed = signal<string[]>([]);
+    readonly error = signal<string | null>(null);
+    readonly pendingCount = signal(0);
+    readonly units = signal<Units>(loadUnits());
 
-  readonly isEmpty = computed(
-    () =>
-      !this.loading() &&
-      !this.error() &&
-      this.cities().length === 0 &&
-      this.failed().length === 0,
-  );
-
-  // ---- actions (was thunks + reducers) ----
-  async fetchWeather(query: string): Promise<void> {
-    const cities = parseCities(query);
-    if (cities.length === 0) return;
-
-    this.loading.set(true);
-    this.failed.set([]);
-    this.error.set(null);
-    this.pendingCount.set(cities.length);
-
-    const results = await Promise.allSettled(
-      cities.map((c) => this.api.fetchCityWeather(c)),
+    readonly cities = computed(() =>
+        this.raw().map((response) => toCityWeatherProps(response, this.units())),
     );
 
-    const data: WeatherResponse[] = [];
-    const failed: string[] = [];
-    for (let i = 0; i < results.length; i++) {
-      const r = results[i];
-      if (r.status === 'fulfilled') {
-        data.push(r.value);
-      } else if (r.reason instanceof CityNotFoundError) {
-        failed.push(cities[i]);
-      } else {
-        // equivalent of rejectWithValue + the rejected reducer
-        this.raw.set([]);
-        this.error.set(SERVICE_ERROR);
+    readonly isEmpty = computed(
+        () =>
+            !this.loading() &&
+            !this.error() &&
+            this.cities().length === 0 &&
+            this.failed().length === 0,
+    );
+
+    async fetchWeather(query: string): Promise<void> {
+        const cities = parseCities(query);
+
+        if (cities.length === 0) {
+            return;
+        }
+
+        this.loading.set(true);
+        this.failed.set([]);
+        this.error.set(null);
+        this.pendingCount.set(cities.length);
+
+        const results = await Promise.allSettled(
+            cities.map((city) => this.api.fetchCityWeather(city)),
+        );
+
+        const weatherResponses: WeatherResponse[] = [];
+        const failedCities: string[] = [];
+
+        for (let index = 0; index < results.length; index++) {
+            const result = results[index];
+
+            if (result.status === 'fulfilled') {
+                weatherResponses.push(result.value);
+            } else if (result.reason instanceof CityNotFoundError) {
+                failedCities.push(cities[index]);
+            } else {
+                this.raw.set([]);
+                this.error.set(SERVICE_ERROR);
+                this.loading.set(false);
+                this.pendingCount.set(0);
+                return;
+            }
+        }
+
+        this.raw.set(weatherResponses);
+        this.failed.set(failedCities);
         this.loading.set(false);
         this.pendingCount.set(0);
-        return;
-      }
+
+        this.persist();
     }
 
-    this.raw.set(data);
-    this.failed.set(failed);
-    this.loading.set(false);
-    this.pendingCount.set(0);
-    this.persist();
-  }
+    async fetchByLocation(): Promise<void> {
+        this.loading.set(true);
+        this.failed.set([]);
+        this.error.set(null);
+        this.pendingCount.set(1);
 
-  async fetchByLocation(): Promise<void> {
-    this.loading.set(true);
-    this.failed.set([]);
-    this.error.set(null);
-    this.pendingCount.set(1);
+        try {
+            const coordinates = await getCurrentCoordinates();
+            const weatherResponse = await this.api.fetchByCoords(coordinates);
 
-    try {
-      const coords = await getCurrentCoordinates();
-      const res = await this.api.fetchByCoords(coords);
-      this.raw.set([res]);
-      this.failed.set([]);
-      this.persist();
-    } catch (e) {
-      this.error.set(
-        e instanceof GeolocationError ? GEOLOCATION_MESSAGES[e.reason] : SERVICE_ERROR,
-      );
-    } finally {
-      this.loading.set(false);
-      this.pendingCount.set(0);
+            this.raw.set([weatherResponse]);
+            this.failed.set([]);
+
+            this.persist();
+        } catch (error) {
+            this.error.set(
+                error instanceof GeolocationError
+                    ? GEOLOCATION_MESSAGES[error.reason]
+                    : SERVICE_ERROR,
+            );
+        } finally {
+            this.loading.set(false);
+            this.pendingCount.set(0);
+        }
     }
-  }
 
-  removeCity(id: number): void {
-    this.raw.update((d) => d.filter((c) => c.id !== id));
-    this.persist();
-  }
+    removeCity(cityId: number): void {
+        this.raw.update((weatherResponses) =>
+            weatherResponses.filter((response) => response.id !== cityId),
+        );
 
-  setUnits(units: Units): void {
-    this.units.set(units);
-    saveUnits(units);
-  }
+        this.persist();
+    }
 
-  // Refetch the cities saved in the previous session
-  restoreSession(): void {
-    const saved = loadCities();
-    if (saved.length > 0) void this.fetchWeather(saved.join(','));
-  }
+    setUnits(units: Units): void {
+        this.units.set(units);
+        saveUnits(units);
+    }
 
-  private persist(): void {
-    saveCities(this.raw().map((c) => c.name));
-  }
+    restoreSession(): void {
+        const savedCities = loadCities();
+
+        if (savedCities.length > 0) {
+            void this.fetchWeather(savedCities.join(','));
+        }
+    }
+
+    private persist(): void {
+        const cityNames = this.raw().map((response) => response.name);
+
+        saveCities(cityNames);
+    }
 }

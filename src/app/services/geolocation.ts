@@ -1,24 +1,36 @@
 import { Coordinates } from '../types/coordinates';
 
-export type GeolocationFailure = 'unsupported' | 'denied' | 'unavailable' | 'timeout';
+export type GeolocationFailure =
+    | 'unsupported'
+    | 'denied'
+    | 'unavailable'
+    | 'timeout';
 
 export class GeolocationError extends Error {
     constructor(public readonly reason: GeolocationFailure) {
         super(`Geolocation failed: ${reason}`);
+
         this.name = 'GeolocationError';
-        Object.setPrototypeOf(this, GeolocationError.prototype);
+        Object.setPrototypeOf(this, new.target.prototype);
     }
 }
 
 export const GEOLOCATION_MESSAGES: Record<GeolocationFailure, string> = {
-    unsupported: 'Your browser does not support location. Please search for a city.',
-    denied: 'Location access was denied. Allow it in your browser settings or search for a city.',
-    unavailable: 'Your location could not be determined. Please search for a city.',
-    timeout: 'Finding your location took too long. Please try again or search for a city.',
+    unsupported:
+        'Your browser does not support location. Please search for a city.',
+    denied:
+        'Location access was denied. Allow it in your browser settings or search for a city.',
+    unavailable:
+        'Your location could not be determined. Please search for a city.',
+    timeout:
+        'Finding your location took too long. Please try again or search for a city.',
 };
 
-const PERMISSION_DENIED = 1;
-const TIMEOUT = 3;
+const PERMISSION_DENIED_CODE = 1;
+const TIMEOUT_CODE = 3;
+
+const GEOLOCATION_TIMEOUT_MS = 10_000;
+const MAXIMUM_LOCATION_AGE_MS = 5 * 60 * 1000;
 
 export const getCurrentCoordinates = (): Promise<Coordinates> =>
     new Promise((resolve, reject) => {
@@ -26,15 +38,38 @@ export const getCurrentCoordinates = (): Promise<Coordinates> =>
             reject(new GeolocationError('unsupported'));
             return;
         }
+
         navigator.geolocation.getCurrentPosition(
-            (p) => resolve({ lat: p.coords.latitude, lon: p.coords.longitude }),
-            (error) => {
-                const reason: GeolocationFailure =
-                    error.code === PERMISSION_DENIED ? 'denied'
-                        : error.code === TIMEOUT ? 'timeout'
-                            : 'unavailable';
-                reject(new GeolocationError(reason));
+            (position) => {
+                const coordinates: Coordinates = {
+                    lat: position.coords.latitude,
+                    lon: position.coords.longitude,
+                };
+
+                resolve(coordinates);
             },
-            { enableHighAccuracy: false, timeout: 10000, maximumAge: 5 * 60 * 1000 },
+            (positionError) => {
+                const failureReason = getGeolocationFailure(positionError.code);
+
+                reject(new GeolocationError(failureReason));
+            },
+            {
+                enableHighAccuracy: false,
+                timeout: GEOLOCATION_TIMEOUT_MS,
+                maximumAge: MAXIMUM_LOCATION_AGE_MS,
+            },
         );
     });
+
+function getGeolocationFailure(errorCode: number): GeolocationFailure {
+    switch (errorCode) {
+        case PERMISSION_DENIED_CODE:
+            return 'denied';
+
+        case TIMEOUT_CODE:
+            return 'timeout';
+
+        default:
+            return 'unavailable';
+    }
+}

@@ -5,7 +5,6 @@ const EXAMPLE = 'Bratislava, Trnava, Vienna';
 @Component({
   selector: 'app-empty-state',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [],
   templateUrl: './empty-state.component.html',
   styleUrl: './empty-state.component.css'

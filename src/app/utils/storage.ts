@@ -13,7 +13,11 @@ export const loadCities = (): string[] => {
 };
 
 export const saveCities = (cities: string[]): void => {
-    try { localStorage.setItem(CITIES_KEY, JSON.stringify(cities)); } catch { /* ignore */ }
+    try { 
+        localStorage.setItem(CITIES_KEY, JSON.stringify(cities)); 
+    } catch { 
+        // ignore  
+    }
 };
 
 export const loadUnits = (): Units => {
@@ -25,9 +29,9 @@ export const loadUnits = (): Units => {
 };
 
 export const saveUnits = (units: Units): void => {
-    try { 
-        localStorage.setItem(UNITS_KEY, units); 
-    } catch { 
+    try {
+        localStorage.setItem(UNITS_KEY, units);
+    } catch {
         // ignore 
     }
 };

@@ -6,42 +6,54 @@ import { environment } from '../../environments/environment';
 import { Coordinates } from '../types/coordinates';
 import { WeatherResponse } from '../types/weather-response';
 
+const WEATHER_API_URL =
+    'https://api.openweathermap.org/data/2.5/weather';
+
+const DEFAULT_UNITS = 'metric';
+
 export class CityNotFoundError extends Error {
-    constructor(public readonly city: string) {
-        super(`City not found: ${city}`);
+    constructor(public readonly cityName: string) {
+        super(`City not found: ${cityName}`);
+
         this.name = 'CityNotFoundError';
-        Object.setPrototypeOf(this, CityNotFoundError.prototype);
+        Object.setPrototypeOf(this, new.target.prototype);
     }
 }
 
 @Injectable({ providedIn: 'root' })
 export class WeatherApiService {
-    private readonly http = inject(HttpClient);
-    private readonly baseUrl = 'https://api.openweathermap.org/data/2.5/weather';
+    private readonly httpClient = inject(HttpClient);
 
-    fetchCityWeather(city: string): Promise<WeatherResponse> {
-        return this.request({ q: city }, city);
+    fetchCityWeather(cityName: string): Promise<WeatherResponse> {
+        return this.fetchWeather({ q: cityName }, cityName);
     }
 
-    fetchByCoords({ lat, lon }: Coordinates): Promise<WeatherResponse> {
-        return this.request({ lat, lon }, `${lat},${lon}`);
+    fetchByCoords(coordinates: Coordinates): Promise<WeatherResponse> {
+        const { lat, lon } = coordinates;
+
+        return this.fetchWeather({ lat, lon }, `${lat},${lon}`);
     }
 
-    private async request(
-        params: Record<string, string | number>,
-        label: string,
+    private async fetchWeather(
+        queryParameters: Record<string, string | number>,
+        locationLabel: string,
     ): Promise<WeatherResponse> {
         try {
             return await firstValueFrom(
-                this.http.get<WeatherResponse>(this.baseUrl, {
-                    params: { ...params, units: 'metric', appid: environment.owmApiKey },
+                this.httpClient.get<WeatherResponse>(WEATHER_API_URL, {
+                    params: {
+                        ...queryParameters,
+                        units: DEFAULT_UNITS,
+                        appid: environment.owmApiKey,
+                    },
                 }),
             );
-        } catch (e) {
-            if (e instanceof HttpErrorResponse && e.status === 404) {
-                throw new CityNotFoundError(label);
+        } catch (error: unknown) {
+            if (error instanceof HttpErrorResponse && error.status === 404) {
+                throw new CityNotFoundError(locationLabel);
             }
-            throw e;
+
+            throw error;
         }
     }
 }
