@@ -1,0 +1,41 @@
+<div>
+    <h1 class="app-name">Weather App<span aria-hidden="true">🌤</span></h1>
+
+    <app-search-bar (searched)="store.fetchWeather($event)" />
+
+    <div class="controls">
+        <app-location-button [disabled]="store.loading()" (locate)="store.fetchByLocation()" />
+        <app-unit-toggle [units]="store.units()" (changed)="store.setUnits($event)" />
+    </div>
+
+    @if (store.isEmpty()) {
+    <app-empty-state (tried)="store.fetchWeather($event)" />
+    }
+
+    <div aria-live="polite" [attr.aria-busy]="store.loading()">
+        @if (store.loading()) {
+        <p class="visually-hidden">Loading weather…</p>
+        @for (i of skeletons(); track i) {
+        <app-city-weather-skeleton />
+        }
+        }
+
+        @if (store.error(); as err) {
+        <span class="error-message" role="alert">
+            <fa-icon [icon]="faFrown" />
+            <span style="font-size: 20px"> {{ err }}</span>
+        </span>
+        }
+
+        @for (city of store.failed(); track city) {
+        <span class="error-message" role="alert">
+            <fa-icon [icon]="faFrown" />
+            <span style="font-size: 20px"> Sorry, {{ city }} not found</span>
+        </span>
+        }
+
+        @for (c of store.cities(); track c.id) {
+        <app-city-weather [city]="c" (remove)="store.removeCity(c.id)" />
+        }
+    </div>
+</div>

@@ -1,1 +1,414 @@
-/* You can add global styles to this file, and also import other style files */
+* {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+        Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+html {
+    background-color: darkseagreen;
+}
+
+.app-name {
+    font-size: 2.3rem;
+}
+
+/* app box */
+.App {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    width: 100%;
+    max-width: 500px;
+    min-height: 440px;
+    box-sizing: border-box;
+    /* background-color: #ffffff; */
+    background-color: rgba(226, 226, 226, 0.2);
+    text-align: center;
+    margin: 128px auto;
+    border-radius: 10px;
+    padding-bottom: 32px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+/* City Search  */
+.city-search {
+    width: 200px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    outline: none;
+    border-radius: 20px;
+    font-size: 16px;
+    background-color: white;
+    /* background-color: rgba(226, 226, 226, 0.6); */
+    background-image: url(assets/searchicon.jpg);
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    padding: 12px 20px 12px 40px;
+    -webkit-transition: width 0.4s ease-in-out;
+    transition: width 0.4s ease-in-out;
+}
+
+.city-search:focus {
+    width: 60%;
+    /* background-color: white; */
+}
+
+.city-search:focus-visible,
+.example-btn:focus-visible {
+    outline: 3px solid #1e2432;
+    outline-offset: 2px;
+}
+
+/* city name */
+.city-name {
+    font-size: 1.25em;
+}
+
+h2 {
+    margin-bottom: 10px;
+}
+
+/* current date */
+.date {
+    font-size: 1.25em;
+    font-weight: 500;
+}
+
+/* weather icon and temp */
+.icon-temp {
+    font-size: 4rem;
+    font-weight: 700;
+    color: var(--tile-fg, #1e2432);
+    text-align: center;
+}
+
+.deg {
+    font-size: 2rem;
+}
+
+/* weather description and wind speed */
+.des-wind {
+    font-weight: 500;
+}
+
+/* Error message */
+.error-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: rgb(20, 2, 2);
+    font-size: 30px;
+    margin: 2em;
+    gap: 12px;
+}
+
+/* weather tile */
+.weather-tile {
+
+    .header {
+        padding-left: 3em;
+        padding-right: 3em;
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+    }
+
+    font-size: 0.85em;
+    border-radius: 0.5em;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--tile-bg, #6d8c6d);
+    color: var(--tile-fg, inherit);
+    margin: 2em;
+    position: relative;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.search-hint {
+    font-size: 0.8em;
+    color: #333;
+    margin: 8px 0 0;
+}
+
+/* empty state */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin: 1em 2em;
+    font-size: 0.95em;
+}
+
+.empty-or {
+    color: #333;
+    font-size: 0.85em;
+}
+
+.example-btn {
+    margin-top: 8px;
+    padding: 10px 18px;
+    border: 2px solid #6d8c6d;
+    border-radius: 20px;
+    background: white;
+    font-size: 0.95em;
+    cursor: pointer;
+}
+
+.example-btn:hover {
+    background: #eef4ee;
+}
+
+/* skeleton */
+.weather-tile.skeleton {
+    padding: 1.5em 2em;
+    gap: 1em;
+}
+
+.skeleton-line {
+    border-radius: 6px;
+    background: linear-gradient(90deg,
+            rgba(255, 255, 255, 0.15) 25%,
+            rgba(255, 255, 255, 0.35) 50%,
+            rgba(255, 255, 255, 0.15) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s linear infinite;
+}
+
+.skeleton-title {
+    height: 1.4em;
+    width: 55%;
+}
+
+.skeleton-temp {
+    height: 3.5em;
+    width: 40%;
+    align-self: center;
+}
+
+.skeleton-text {
+    height: 1em;
+    width: 70%;
+    align-self: center;
+}
+
+.remove-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+    color: var(--tile-fg, #1e2432);
+    font-size: 1.2em;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.remove-btn:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.remove-btn:focus-visible {
+    outline: 3px solid #1e2432;
+    outline-offset: 2px;
+}
+
+.unit-toggle {
+    display: inline-flex;
+    align-self: center;
+    border: 2px solid #6d8c6d;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.unit-toggle button {
+    border: none;
+    background: white;
+    padding: 6px 16px;
+    font-size: 0.9em;
+    cursor: pointer;
+}
+
+.unit-toggle button[aria-pressed='true'] {
+    background: #6d8c6d;
+    color: white;
+}
+
+.unit-toggle button:focus-visible {
+    outline: 3px solid #1e2432;
+    outline-offset: -3px;
+}
+
+.details {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin: 1em 2em 1.5em;
+    padding: 0;
+    text-align: center;
+}
+
+.details>div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.details dt {
+    font-size: 0.75em;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.details dd {
+    margin: 0;
+    font-weight: 600;
+}
+
+/* weather themes */
+.weather-tile.theme-clear-day {
+    --tile-bg: #f2c94c;
+    --tile-fg: #1e2432;
+}
+
+.weather-tile.theme-clear-night {
+    --tile-bg: #1e2a44;
+    --tile-fg: #f5f7fa;
+}
+
+.weather-tile.theme-clouds {
+    --tile-bg: #8fa3b3;
+    --tile-fg: #14202b;
+}
+
+.weather-tile.theme-rain {
+    --tile-bg: #4f6d8a;
+    --tile-fg: #ffffff;
+}
+
+.weather-tile.theme-snow {
+    --tile-bg: #dbe8f1;
+    --tile-fg: #1e2432;
+}
+
+.weather-tile.theme-thunderstorm {
+    --tile-bg: #3d3a56;
+    --tile-fg: #ffffff;
+}
+
+.weather-tile.theme-mist {
+    --tile-bg: #b8bfc4;
+    --tile-fg: #1e2432;
+}
+
+.weather-tile {
+    transition: background-color 0.3s ease;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.locate-btn {
+    padding: 6px 16px;
+    border: 2px solid #6d8c6d;
+    border-radius: 20px;
+    background: white;
+    font-size: 0.9em;
+    cursor: pointer;
+}
+
+.locate-btn:hover:not(:disabled) {
+    background: #eef4ee;
+}
+
+.locate-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.locate-btn:focus-visible {
+    outline: 3px solid #1e2432;
+    outline-offset: 2px;
+}
+
+@media (max-width: 540px) {
+    .details {
+        grid-template-columns: repeat(2, 1fr);
+        margin: 1em;
+    }
+}
+
+@keyframes shimmer {
+    to {
+        background-position: -200% 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .city-search {
+        transition: none;
+    }
+
+    .skeleton-line {
+        animation: none;
+    }
+
+    .weather-tile {
+        transition: none;
+    }
+}
+
+@media (max-width: 540px) {
+    .App {
+        margin: 0 auto;
+        border-radius: 0;
+        min-height: 100vh;
+    }
+
+    .app-name {
+        font-size: 1.8rem;
+    }
+
+    .city-search:focus {
+        width: 80%;
+    }
+
+    .weather-tile {
+        margin: 1em;
+    }
+
+    .weather-tile .header {
+        padding: 0 1em;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .icon-temp {
+        font-size: 3rem;
+    }
+
+    .error-message {
+        font-size: 22px;
+    }
+}

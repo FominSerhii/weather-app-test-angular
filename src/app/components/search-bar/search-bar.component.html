@@ -1,0 +1,21 @@
+<div class="search-bar">
+    <label for="city-search" class="visually-hidden">
+        City names, separated by commas
+    </label>
+    <input
+        id="city-search"
+        type="text"
+        class="city-search"
+        placeholder="Search City.."
+        name="query"
+        autocomplete="off"
+        enterkeyhint="search"
+        aria-describedby="city-search-hint"
+        [value]="query()"
+        (input)="onInput($event)"
+        (keydown.enter)="submit($event)"
+    />
+    <p id="city-search-hint" class="search-hint">
+        Separate multiple cities with commas
+    </p>
+</div>

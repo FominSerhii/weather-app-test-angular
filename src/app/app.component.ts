@@ -1,13 +1,10 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { WeatherComponent } from './components/weather/weather.component';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  imports: [WeatherComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `<div class="App"><app-weather /></div>`,
 })
-export class AppComponent {
-  title = 'weather-app-angular';
-}
+export class AppComponent { }

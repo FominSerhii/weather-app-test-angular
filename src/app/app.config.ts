@@ -1,6 +1,12 @@
-import { ApplicationConfig } from '@angular/core';
-import { provideClientHydration } from '@angular/platform-browser';
+import { ApplicationConfig, inject, provideAppInitializer } from '@angular/core';
+import { provideHttpClient } from '@angular/common/http';
+import { WeatherStore } from './state/weather.store';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideClientHydration()]
+  providers: [
+    provideHttpClient(),
+    provideAppInitializer(() => {
+      inject(WeatherStore).restoreSession();
+    }),
+  ],
 };
