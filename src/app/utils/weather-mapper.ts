@@ -52,10 +52,19 @@ const DATE: Intl.DateTimeFormatOptions = {
 
 const round1 = (n: number) => Math.round(n * 10) / 10;
 
-export const toCityWeatherProps = (response: WeatherResponse, units: Units): CityWeatherView => {
+export const toCityWeatherProps = (
+    response: WeatherResponse,
+    units: Units,
+    now: number = response.dt,
+): CityWeatherView => {
     const imperial = units === 'imperial';
     const conv = (c: number) => (imperial ? (c * 9) / 5 + 32 : c);
     const w = response.weather[0];
+    const formatCityDate = (unix: number, offset: number): string =>
+        local(unix, offset, DATE, 'en-GB');
+    const formatCityTime = (unix: number, offset: number): string =>
+        local(unix, offset, TIME, 'en-GB');
+    
     return {
         id: response.id,
         name: response.name,
@@ -68,8 +77,8 @@ export const toCityWeatherProps = (response: WeatherResponse, units: Units): Cit
         humidity: response.main.humidity,
         tempUnit: imperial ? '°F' : '°C',
         windUnit: imperial ? 'mph' : 'm/s',
-        date: local(response.dt, response.timezone, DATE, 'en-GB'),
-        time: local(response.dt, response.timezone, TIME, 'en-GB'),
+        date: formatCityDate(now, response.timezone),
+        time: formatCityTime(now, response.timezone),
         sunrise: local(response.sys.sunrise, response.timezone, TIME, 'en-GB'),
         sunset: local(response.sys.sunset, response.timezone, TIME, 'en-GB'),
         theme: toTheme(w.main, w.icon),

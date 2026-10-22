@@ -1,11 +1,7 @@
 @let weather = city();
 
 <div class="weather-tile" [class]="'weather-tile theme-' + weather.theme">
-    <button 
-        type="button" 
-        class="remove-btn" 
-        [attr.aria-label]="'Remove ' + weather.name" 
-        (click)="remove.emit()">
+    <button type="button" class="remove-btn" [attr.aria-label]="'Remove ' + weather.name" (click)="remove.emit()">
         <p style="margin: 0; margin-bottom: 2px">×</p>
     </button>
 
@@ -21,12 +17,14 @@
     </div>
 
     <div class="icon-temp">
-        <img 
-            [src]="'https://openweathermap.org/img/wn/' + weather.icon + '@2x.png'" 
-            alt="" 
-        />
+        <app-weather-illustration [theme]="weather.theme" />
 
-        {{ weather.temp | number: '1.1-1' }}<sup class="deg">{{ weather.tempUnit }}</sup>
+        <div class="temperature">
+            <span class="deg">
+                {{ weather.temp | number: '1.1-1' }}
+                <sup>{{ weather.tempUnit }}</sup>
+            </span>
+        </div>
     </div>
 
     <div class="des-wind">

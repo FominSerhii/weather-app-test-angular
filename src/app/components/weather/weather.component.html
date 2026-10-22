@@ -1,7 +1,10 @@
 <div>
-    <h1 class="app-name">
-        Weather App<span aria-hidden="true">🌤</span>
-    </h1>
+    <div class="app-header">
+        <h1 class="app-name">
+            Weather App<span aria-hidden="true">🌤</span>
+        </h1>
+        <app-theme-toggle />
+    </div>
 
     <app-search-bar (searched)="store.fetchWeather($event)" />
 

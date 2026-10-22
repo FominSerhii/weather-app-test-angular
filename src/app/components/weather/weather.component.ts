@@ -14,6 +14,7 @@ import { LocationButtonComponent } from '../location-button/location-button.comp
 import { EmptyStateComponent } from '../empty-state/empty-state.component';
 import { CityWeatherComponent } from '../city-weather/city-weather.component';
 import { CityWeatherSkeletonComponent } from '../city-weather-skeleton/city-weather-skeleton.component';
+import { ThemeToggleComponent } from '../theme-toggle/theme-toggle.component';
 
 const MAX_SKELETONS = 5;
 
@@ -27,6 +28,7 @@ const MAX_SKELETONS = 5;
     EmptyStateComponent,
     CityWeatherComponent,
     CityWeatherSkeletonComponent,
+    ThemeToggleComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './weather.component.html',

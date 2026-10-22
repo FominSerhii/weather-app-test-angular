@@ -1,0 +1,44 @@
+<div 
+    class="weather-art" 
+    [class]="'weather-art--' + theme()" 
+    role="img" 
+    [attr.aria-label]="theme().replace('-', ' ')">
+    @if (theme() === 'clear-day') {
+        <div class="sun">
+            <div class="sun-rays"></div>
+        </div>
+    }
+
+    @if (theme() === 'clear-night') {
+        <div class="moon"></div>
+        <div class="stars">
+            <span></span><span></span><span></span>
+        </div>
+    }
+
+    @if (theme() === 'clouds') {
+        <div class="cloud cloud--back"></div>
+        <div class="cloud cloud--front"></div>
+    }
+
+    @if (theme() === 'rain' || theme() === 'thunderstorm') {
+        <div class="cloud cloud--back"></div>
+        <div class="cloud cloud--front"></div>
+        <div class="rain">
+            <span></span><span></span><span></span><span></span>
+        </div>
+    }
+
+    @if (theme() === 'snow') {
+        <div class="cloud cloud--front"></div>
+        <div class="snow">
+            <span>✳</span><span>✳</span><span>✳</span>
+        </div>
+    }
+
+    @if (theme() === 'mist') {
+        <div class="mist">
+            <span></span><span></span><span></span>
+        </div>
+    }
+</div>

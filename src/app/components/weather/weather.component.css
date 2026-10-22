@@ -1,0 +1,13 @@
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+@media (max-width: 540px) {
+    .app-header {
+        margin-bottom: 24px;
+    }
+}

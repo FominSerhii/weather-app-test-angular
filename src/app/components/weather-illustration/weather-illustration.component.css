@@ -1,0 +1,283 @@
+.weather-art {
+    position: relative;
+    width: 150px;
+    height: 120px;
+    flex: 0 0 auto;
+    overflow: hidden;
+}
+
+/* Sun */
+.sun {
+    position: absolute;
+    top: 15px;
+    left: 34px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--weather-sun);
+    box-shadow: 0 0 25px var(--weather-sun-glow);
+    animation: sun-float 4s ease-in-out infinite;
+}
+
+.sun-rays {
+    position: absolute;
+    inset: -9px;
+    border: 3px dashed var(--weather-ray);
+    border-radius: 50%;
+    animation: sun-rotate 24s linear infinite;
+}
+
+/* Clouds */
+.cloud {
+    position: absolute;
+    width: 82px;
+    height: 30px;
+    border-radius: 24px;
+    background: var(--weather-cloud);
+}
+
+.cloud::before,
+.cloud::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    background: inherit;
+}
+
+.cloud::before {
+    width: 36px;
+    height: 36px;
+    top: -18px;
+    left: 12px;
+}
+
+.cloud::after {
+    width: 27px;
+    height: 27px;
+    top: -12px;
+    left: 43px;
+}
+
+.cloud--back {
+    top: 40px;
+    left: 55px;
+    opacity: .65;
+    transform: scale(.8);
+    background: var(--weather-cloud-back);
+}
+
+.cloud--front {
+    top: 58px;
+    left: 22px;
+    z-index: 2;
+    animation: cloud-float 5s ease-in-out infinite;
+    background: var(--weather-cloud);
+}
+
+/* Theme-specific cloud colors */
+.weather-art--rain .cloud,
+.weather-art--thunderstorm .cloud {
+    background: #a9b8ca;
+}
+
+.weather-art--snow .cloud {
+    background: #eaf4ff;
+}
+
+/* Night */
+.moon {
+    position: absolute;
+    top: 15px;
+    left: 35px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--weather-moon);
+    box-shadow: 0 0 28px rgb(164 192 255 / 30%);
+}
+
+.moon::after {
+    content: '';
+    position: absolute;
+    top: -7px;
+    left: 13px;
+    width: 43px;
+    height: 43px;
+    border-radius: 50%;
+    background: var(--card, #fff);
+}
+
+.stars span {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--weather-stars);
+}
+
+.stars span:nth-child(1) {
+    top: 15px;
+    left: 105px;
+}
+
+.stars span:nth-child(2) {
+    top: 55px;
+    left: 115px;
+}
+
+.stars span:nth-child(3) {
+    top: 75px;
+    left: 30px;
+}
+
+/* Rain */
+.rain {
+    position: absolute;
+    z-index: 3;
+    top: 83px;
+    left: 35px;
+    display: flex;
+    gap: 19px;
+}
+
+.rain span {
+    width: 3px;
+    height: 13px;
+    border-radius: 4px;
+    background: var(--weather-rain);
+    animation: rain-fall .8s linear infinite;
+}
+
+.weather-art--thunderstorm .rain span {
+    background: var(--weather-rain);
+}
+
+.weather-art--thunderstorm::after {
+    color: var(--weather-lightning);
+}
+
+.rain span:nth-child(2) {
+    animation-delay: .2s;
+}
+
+.rain span:nth-child(3) {
+    animation-delay: .4s;
+}
+
+.rain span:nth-child(4) {
+    animation-delay: .6s;
+}
+
+.weather-art--thunderstorm::after {
+    content: '⚡';
+    position: absolute;
+    z-index: 4;
+    top: 78px;
+    left: 91px;
+    color: #f5c451;
+    font-size: 25px;
+}
+
+/* Snow */
+.snow span {
+    position: absolute;
+    z-index: 3;
+    color: var(--weather-snow);
+    font-size: 18px;
+    animation: snow-fall 2s ease-in-out infinite alternate;
+}
+
+.snow span:nth-child(1) {
+    top: 80px;
+    left: 35px;
+}
+
+.snow span:nth-child(2) {
+    top: 88px;
+    left: 72px;
+    animation-delay: .5s;
+}
+
+.snow span:nth-child(3) {
+    top: 78px;
+    left: 108px;
+    animation-delay: 1s;
+}
+
+/* Mist */
+.mist {
+    position: absolute;
+    top: 30px;
+    left: 15px;
+    width: 120px;
+}
+
+.mist span {
+    display: block;
+    height: 6px;
+    margin: 13px 0;
+    border-radius: 8px;
+    background: var(--weather-mist);
+    animation: mist-drift 3s ease-in-out infinite alternate;
+}
+
+.mist span:nth-child(2) {
+    width: 80%;
+    animation-delay: .6s;
+}
+
+.mist span:nth-child(3) {
+    width: 65%;
+    animation-delay: 1s;
+}
+
+@keyframes sun-float {
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes sun-rotate {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes cloud-float {
+    50% {
+        transform: translateX(5px);
+    }
+}
+
+@keyframes rain-fall {
+    from {
+        transform: translateY(-4px);
+        opacity: .4;
+    }
+
+    to {
+        transform: translateY(8px);
+        opacity: 1;
+    }
+}
+
+@keyframes snow-fall {
+    to {
+        transform: translateY(8px) rotate(35deg);
+    }
+}
+
+@keyframes mist-drift {
+    to {
+        transform: translateX(10px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .weather-art *,
+    .weather-art *::before,
+    .weather-art *::after {
+        animation: none !important;
+    }
+}
