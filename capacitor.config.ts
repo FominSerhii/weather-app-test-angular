@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.example.app',
+  appId: 'com.serhii.weatherapp2026',
   appName: 'Weather Dashboard',
   webDir: 'dist/weather-app-angular/browser'
 };

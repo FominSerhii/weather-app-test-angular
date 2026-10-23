@@ -137,6 +137,12 @@
     }
 }
 
+:host {
+    display: block;
+    min-height: 100%;
+    color: var(--text);
+}
+
 html {
     background-color: var(--bg);
 }
@@ -173,6 +179,40 @@ body {
     font-weight: 750;
     letter-spacing: -0.045em;
     line-height: 1.2;
+}
+
+/* Ionic header */
+ion-header {
+    box-shadow: none;
+}
+
+ion-toolbar {
+    --background: var(--card);
+    --color: var(--text);
+    --border-color: var(--border);
+    --min-height: 64px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+ion-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+/* Ionic page background and padding */
+ion-content {
+    --background: var(--bg);
+    --color: var(--text);
+}
+
+/* Main app layout */
+.weather-page {
+    width: 100%;
+    max-width: 760px;
+    margin-inline: auto;
+    padding: 8px 0 calc(32px + env(safe-area-inset-bottom, 0px));
 }
 
 /* City search */
@@ -550,11 +590,11 @@ h2 {
 /* Shared controls */
 .controls {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    justify-content: flex-start;
-    gap: 10px;
-    margin-top: 16px;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 20px 0 24px;
+    flex-wrap: wrap;
 }
 
 .locate-btn:disabled {
@@ -569,6 +609,14 @@ h2 {
     align-items: center;
 }
 
+/* Keyboard accessibility */
+ion-button:focus-visible,
+button:focus-visible,
+input:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+}
+
 /* Animations */
 @keyframes shimmer {
     to {
@@ -578,6 +626,19 @@ h2 {
 
 /* Responsive layout */
 @media (max-width: 540px) {
+    ion-toolbar {
+        --min-height: 56px;
+    }
+
+    ion-title {
+        font-size: 1.1rem;
+    }
+
+    .weather-page {
+        padding-top: 4px;
+        padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    }
+
     .App {
         width: calc(100% - 32px);
         padding-top: 20px;

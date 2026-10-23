@@ -6,6 +6,13 @@ import {
 } from '@angular/core';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faFrown } from '@fortawesome/free-solid-svg-icons';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonContent,
+} from '@ionic/angular';
 
 import { WeatherStore } from '../../state/weather.store';
 import { SearchBarComponent } from '../search-bar/search-bar.component';
@@ -20,6 +27,7 @@ const MAX_SKELETONS = 5;
 
 @Component({
   selector: 'app-weather',
+  host: { class: 'ion-page' },
   imports: [
     FaIconComponent,
     SearchBarComponent,
@@ -28,7 +36,12 @@ const MAX_SKELETONS = 5;
     EmptyStateComponent,
     CityWeatherComponent,
     CityWeatherSkeletonComponent,
-    ThemeToggleComponent
+    ThemeToggleComponent,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonContent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './weather.component.html',

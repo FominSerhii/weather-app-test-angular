@@ -23,6 +23,7 @@
     "@angular/ssr": "^19.2.27",
     "@capacitor/android": "^8.5.3",
     "@capacitor/core": "^8.5.3",
+    "@capacitor/geolocation": "^8.2.4",
     "@capacitor/ios": "^8.5.3",
     "@fortawesome/angular-fontawesome": "^1.0.0",
     "@fortawesome/fontawesome-svg-core": "^7.3.1",
