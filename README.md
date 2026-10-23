@@ -1,6 +1,18 @@
-# WeatherAppAngular
+# Weather App
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 19.0.9.
+An Angular weather dashboard for searching multiple cities, viewing local weather details, using browser geolocation, and switching temperature units and themes.
+
+## Requirements
+
+- Node.js and npm
+- An OpenWeather API key
+
+## Setup
+
+Install dependencies:
+
+```bash
+npm install
 
 ## Development server
 

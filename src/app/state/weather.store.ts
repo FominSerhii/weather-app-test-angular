@@ -31,7 +31,6 @@ export class WeatherStore {
 
     private readonly raw = signal<WeatherResponse[]>([]);
     private readonly clock = inject(ClockService);
-    private lastRequest: (() => Promise<void>) | null = null;   // used by retry (item 11)
     readonly lastUpdated = signal<number | null>(null);
 
     readonly cities = computed(() => {
