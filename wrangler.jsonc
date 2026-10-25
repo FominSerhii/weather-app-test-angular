@@ -1,0 +1,10 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "weather-app-angular",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist/weather-app-angular/browser",
+    "not_found_handling": "single-page-application"
+  },
+  "previews": {}
+}
