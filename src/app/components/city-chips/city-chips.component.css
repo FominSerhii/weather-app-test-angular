@@ -1,0 +1,52 @@
+.city-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: var(--space-5) 0 0;
+}
+
+.city-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 40px;
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--button-background);
+    color: var(--button-text);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background var(--transition-fast),
+        border-color var(--transition-fast);
+}
+
+.city-chip:hover {
+    background: var(--button-hover);
+    border-color: var(--accent);
+}
+
+.city-chip[aria-selected='true'] {
+    background: var(--button-active-background);
+    border-color: var(--button-active-background);
+    color: var(--button-active-text);
+}
+
+.city-chip:focus-visible {
+    outline: 3px solid var(--focus-outline);
+    outline-offset: 2px;
+}
+
+.chip-temp {
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    opacity: 0.8;
+}
+
+@media (max-width: 540px) {
+    .city-chip {
+        padding: 6px 12px;
+    }
+}

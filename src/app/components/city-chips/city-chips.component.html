@@ -1,0 +1,22 @@
+<div 
+    class="city-chips" 
+    role="tablist" 
+    aria-label="Cities" 
+    (keydown)="onKeydown($event)">
+    @for (c of cities(); track c.id) {
+        <button
+            type="button"
+            role="tab"
+            class="city-chip"
+            [id]="'city-tab-' + c.id"
+            aria-controls="city-panel"
+            [attr.aria-selected]="c.id === selectedId()"
+            [attr.tabindex]="c.id === selectedId() ? 0 : -1"
+            (click)="selected.emit(c.id)">
+            <span class="chip-name">{{ c.name }}</span>
+            <span class="chip-temp">
+                {{ c.temp | number: '1.0-0' }}{{ c.tempUnit }}
+            </span>
+        </button>
+    }
+</div>

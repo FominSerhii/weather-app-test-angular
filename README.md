@@ -1,11 +1,25 @@
 # Weather App
 
-An Angular weather dashboard for searching multiple cities, viewing local weather details, using browser geolocation, and switching temperature units and themes.
+An Angular weather dashboard for searching multiple cities, viewing local weather details and a 5-day forecast, using browser geolocation, and switching temperature units and themes.
+
+## Features
+
+- Search several cities at once (comma separated); unknown cities are reported individually
+- "Use my location" via the Geolocation API, with clear errors for denied, unavailable and timeout
+- City chips: switch between searched cities (chips wrap to multiple rows, keyboard accessible)
+- 5-day forecast per city (OpenWeatherMap 5 day / 3 hour forecast aggregated per day), lazy-loaded and cached for 10 minutes
+- °C / °F toggle, converted client-side (no refetch)
+- Condition-based themes (clear day/night, clouds, rain, snow, thunderstorm, mist)
+- Live local time per city; data auto-refreshes after 10 min when the tab becomes visible
+- Retry button on service errors
+- Dark mode: follows `prefers-color-scheme`, manual toggle, preference saved
+- Saved cities and units restored on reload
+- Loading skeletons, ARIA live regions, keyboard-friendly focus styles
 
 ## Requirements
 
-- Node.js and npm
-- An OpenWeather API key
+- Node.js 20+ and npm
+- An [OpenWeather](https://openweathermap.org/api) API key (the free plan covers current weather and the 5-day forecast)
 
 ## Setup
 
@@ -13,6 +27,34 @@ Install dependencies:
 
 ```bash
 npm install
+```
+
+Start the dev server:
+
+```bash
+npm start
+```
+Open `http://localhost:4200/`. The app reloads automatically when you change source files.
+
+## Scripts
+
+| Command | What it does |
+|---|---|
+| `npm start` | Dev server |
+| `npm run lint` | ESLint |
+| `npm test` | Unit tests (Karma) |
+| `npm run build` | Production build into `dist/` |
+
+## Architecture
+
+- `state/weather.store.ts`: single signal-based store (state, derived view models, selection, actions, persistence)
+- `services/`: `WeatherApiService` (current weather and forecast), `geolocation`, `ThemeService`, `ClockService`
+- `utils/`: pure helpers (city parsing, weather and forecast mapping, storage)
+- `components/`: presentational standalone components; the container is `WeatherComponent`
+
+## CI
+
+GitHub Actions runs lint, tests and build on every push to `main` and on pull requests.
 
 ## Development server
 

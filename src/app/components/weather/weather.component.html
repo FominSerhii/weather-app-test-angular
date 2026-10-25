@@ -17,6 +17,13 @@
             (changed)="store.setUnits($event)" />
     </div>
 
+    @if (multiple()) {
+        <app-city-chips
+            [cities]="store.cities()"
+            [selectedId]="store.selectedId()"
+            (selected)="store.selectCity($event)" />
+    }
+
     @if (store.isEmpty()) {
         <app-empty-state (tried)="store.fetchWeather($event)" />
     }
@@ -43,10 +50,23 @@
             </span>
         }
 
-        @for (c of store.cities(); track c.id) {
+        <!-- @for (c of store.cities(); track c.id) {
             <app-city-weather 
                 [city]="c" 
                 (remove)="store.removeCity(c.id)" />
+        } -->
+        @if (store.selectedCity(); as c) {
+            <div
+                id="city-panel"
+                [attr.role]="multiple() ? 'tabpanel' : null"
+                [attr.aria-labelledby]="multiple() ? 'city-tab-' + c.id : null">
+                <app-city-weather 
+                    [city]="c" 
+                    (remove)="store.removeCity(c.id)" />
+                <app-forecast
+                    [forecast]="store.selectedForecast()"
+                    (retry)="store.retryForecast()" />
+            </div>
         }
     </div>
 </div>
