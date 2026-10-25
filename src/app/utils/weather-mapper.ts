@@ -3,7 +3,7 @@ import { Units } from '../types/units';
 import { WeatherResponse } from '../types/weather-response';
 import { WeatherTheme } from '../types/weather-theme';
 
-const toTheme = (
+export const toTheme = (
     weatherCondition: string,
     iconCode: string,
 ): WeatherTheme => {

@@ -12,7 +12,14 @@ describe('WeatherComponent', () => {
   beforeEach(async () => {
     store = jasmine.createSpyObj<WeatherStore>(
       'WeatherStore',
-      ['fetchWeather', 'fetchByLocation', 'setUnits', 'removeCity'],
+      [
+        'fetchWeather',
+        'fetchByLocation',
+        'setUnits',
+        'removeCity',
+        'selectCity',
+        'retryForecast',
+      ],
       {
         cities: signal([]),
         loading: signal(false),
@@ -21,6 +28,12 @@ describe('WeatherComponent', () => {
         pendingCount: signal(0),
         units: signal('metric'),
         isEmpty: signal(true),
+        selectedId: signal(0),
+        selectedCity: signal(null),
+        selectedForecast: signal({
+          status: 'loading' as const,
+          days: [],
+        }),
       },
     );
 
@@ -48,9 +61,11 @@ describe('WeatherComponent', () => {
     fixture.detectChanges();
 
     expect(
-      fixture.nativeElement.querySelector('[aria-live="polite"]')
+      fixture.nativeElement
+        .querySelector('[aria-live="polite"]')
         .getAttribute('aria-busy'),
     ).toBe('true');
+
     expect(
       fixture.nativeElement.querySelector('p.visually-hidden')?.textContent,
     ).toContain('Loading weather');

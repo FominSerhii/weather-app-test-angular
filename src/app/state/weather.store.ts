@@ -13,12 +13,16 @@ import {
     GeolocationError,
     getCurrentCoordinates,
 } from '../services/geolocation';
+import { ClockService } from '../services/clock.service';
+
 import { Units } from '../types/units';
 import { WeatherResponse } from '../types/weather-response';
+import { ForecastState, ForecastView } from '../types/forecast';
+
 import { parseCities } from '../utils/parse-cities';
+import { toDailyForecast } from '../utils/forecast-mapper';
 import { toCityWeatherProps } from '../utils/weather-mapper';
 import { loadCities, loadUnits, saveCities, saveUnits } from '../utils/storage';
-import { ClockService } from '../services/clock.service';
 
 const SERVICE_ERROR = 'Weather service error. Check your API key or connection.';
 const STALE_MS = 10 * 60 * 1000;
@@ -51,6 +55,30 @@ export class WeatherStore {
             this.cities().length === 0 &&
             this.failed().length === 0,
     );
+    private readonly activeId = signal<number | null>(null);
+    readonly selectedId = computed(() => {
+        const ids = this.raw().map((r) => r.id);
+        const active = this.activeId();
+        return active !== null && ids.includes(active) ? active : (ids[0] ?? null);
+    });
+    readonly selectedCity = computed(
+        () => this.cities().find((c) => c.id === this.selectedId()) ?? null,
+    );
+    private readonly selectedRaw = computed(
+        () => this.raw().find((r) => r.id === this.selectedId()) ?? null,
+    );
+    private readonly forecastCache = signal<Record<number, ForecastState>>({});
+
+    readonly selectedForecast = computed<ForecastView>(() => {
+        const id = this.selectedId();
+        const entry = id === null ? undefined : this.forecastCache()[id];
+        return {
+            status: entry?.status ?? 'loading',
+            days: entry?.data
+                ? toDailyForecast(entry.data, this.units(), this.clock.now())
+                : [],
+        };
+    });
 
     constructor() {
         if (!this.isBrowser) {
@@ -113,6 +141,7 @@ export class WeatherStore {
 
         this.persist();
         this.lastUpdated.set(Date.now());
+        this.loadSelectedForecast();
     }
 
     async fetchByLocation(): Promise<void> {
@@ -126,10 +155,12 @@ export class WeatherStore {
             const weatherResponse = await this.api.fetchByCoords(coordinates);
 
             this.raw.set([weatherResponse]);
+            this.activeId.set(weatherResponse.id);
             this.failed.set([]);
 
             this.persist();
             this.lastUpdated.set(Date.now());
+            this.loadSelectedForecast();
         } catch (error) {
             this.error.set(
                 error instanceof GeolocationError
@@ -148,6 +179,7 @@ export class WeatherStore {
         );
 
         this.persist();
+        this.loadSelectedForecast();
     }
 
     setUnits(units: Units): void {
@@ -167,5 +199,51 @@ export class WeatherStore {
         const cityNames = this.raw().map((response) => response.name);
 
         saveCities(cityNames);
+    }
+
+    selectCity(id: number): void {
+        this.activeId.set(id);
+        this.loadSelectedForecast();
+    }
+
+    retryForecast(): void {
+        this.loadSelectedForecast(true);
+    }
+
+    private loadSelectedForecast(force = false): void {
+        const r = this.selectedRaw();
+        if (r) void this.loadForecast(r, force);
+    }
+
+    private async loadForecast(r: WeatherResponse, force: boolean): Promise<void> {
+        const current = this.forecastCache()[r.id];
+        const fresh =
+            current?.status === 'ready' &&
+            Date.now() - (current.fetchedAt ?? 0) < STALE_MS;
+        if (!force && (current?.status === 'loading' || fresh)) return;
+
+        this.setForecast(r.id, { status: 'loading', data: current?.data });
+        try {
+            const data = await this.api.fetchForecast({
+                lat: r.coord.lat,
+                lon: r.coord.lon,
+            });
+            this.setForecast(
+                r.id, { 
+                    status: 'ready', 
+                    data, 
+                    fetchedAt: Date.now() 
+                });
+        } catch {
+            this.setForecast(
+                r.id, { 
+                    status: 'error', 
+                    data: current?.data 
+                });
+        }
+    }
+
+    private setForecast(id: number, state: ForecastState): void {
+        this.forecastCache.update((cache) => ({ ...cache, [id]: state }));
     }
 }
