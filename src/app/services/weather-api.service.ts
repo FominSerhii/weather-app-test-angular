@@ -5,9 +5,11 @@ import { firstValueFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Coordinates } from '../types/coordinates';
 import { WeatherResponse } from '../types/weather-response';
+import { ForecastResponse } from '../types/forecast';
 
 const WEATHER_API_URL =
     'https://api.openweathermap.org/data/2.5/weather';
+const FORECAST_API_URL = 'https://api.openweathermap.org/data/2.5/forecast';
 
 const DEFAULT_UNITS = 'metric';
 
@@ -55,5 +57,18 @@ export class WeatherApiService {
 
             throw error;
         }
+    }
+
+    fetchForecast({ lat, lon }: Coordinates): Promise<ForecastResponse> {
+        return firstValueFrom(
+            this.httpClient.get<ForecastResponse>(FORECAST_API_URL, {
+                params: {
+                    lat,
+                    lon,
+                    units: DEFAULT_UNITS,
+                    appid: environment.owmApiKey,
+                },
+            }),
+        );
     }
 }

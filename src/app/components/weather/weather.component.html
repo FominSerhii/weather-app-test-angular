@@ -9,9 +9,8 @@
 
 <ion-content class="ion-padding">
     <main class="weather-page">
-
         <app-search-bar (searched)="store.fetchWeather($event)" />
-        
+
         <div class="controls">
             <app-location-button 
                 [disabled]="store.loading()" 
@@ -20,11 +19,18 @@
                 [units]="store.units()" 
                 (changed)="store.setUnits($event)" />
         </div>
-        
+
+        @if (multiple()) {
+            <app-city-chips
+                [cities]="store.cities()"
+                [selectedId]="store.selectedId()"
+                (selected)="store.selectCity($event)" />
+        }
+
         @if (store.isEmpty()) {
             <app-empty-state (tried)="store.fetchWeather($event)" />
         }
-        
+
         <div aria-live="polite" [attr.aria-busy]="store.loading()">
             @if (store.loading()) {
                 <p class="visually-hidden">Loading weather…</p>
@@ -32,25 +38,38 @@
                     <app-city-weather-skeleton />
                 }
             }
-        
+
             @if (store.error(); as err) {
                 <span class="error-message" role="alert">
                     <fa-icon [icon]="faFrown" />
                     <span style="font-size: 20px"> {{ err }}</span>
                 </span>
             }
-        
+
             @for (city of store.failed(); track city) {
                 <span class="error-message" role="alert">
                     <fa-icon [icon]="faFrown" />
                     <span style="font-size: 20px"> Sorry, {{ city }} not found</span>
                 </span>
             }
-        
-            @for (c of store.cities(); track c.id) {
+
+            <!-- @for (c of store.cities(); track c.id) {
                 <app-city-weather 
                     [city]="c" 
                     (remove)="store.removeCity(c.id)" />
+            } -->
+            @if (store.selectedCity(); as c) {
+                <div
+                    id="city-panel"
+                    [attr.role]="multiple() ? 'tabpanel' : null"
+                    [attr.aria-labelledby]="multiple() ? 'city-tab-' + c.id : null">
+                    <app-city-weather 
+                        [city]="c" 
+                        (remove)="store.removeCity(c.id)" />
+                    <app-forecast
+                        [forecast]="store.selectedForecast()"
+                        (retry)="store.retryForecast()" />
+                </div>
             }
         </div>
     </main>

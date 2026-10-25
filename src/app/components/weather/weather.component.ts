@@ -22,6 +22,8 @@ import { EmptyStateComponent } from '../empty-state/empty-state.component';
 import { CityWeatherComponent } from '../city-weather/city-weather.component';
 import { CityWeatherSkeletonComponent } from '../city-weather-skeleton/city-weather-skeleton.component';
 import { ThemeToggleComponent } from '../theme-toggle/theme-toggle.component';
+import { CityChipsComponent } from '../city-chips/city-chips.component';
+import { ForecastComponent } from '../forecast/forecast.component';
 
 const MAX_SKELETONS = 5;
 
@@ -42,6 +44,8 @@ const MAX_SKELETONS = 5;
     IonTitle,
     IonButtons,
     IonContent,
+    CityChipsComponent,
+    ForecastComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './weather.component.html',
@@ -50,6 +54,7 @@ const MAX_SKELETONS = 5;
 export class WeatherComponent {
   protected readonly store = inject(WeatherStore);
   protected readonly faFrown = faFrown;
+  protected readonly multiple = computed(() => this.store.cities().length > 1);
 
   protected readonly skeletons = computed(() => {
     const skeletonCount = Math.min(

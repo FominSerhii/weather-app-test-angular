@@ -1,0 +1,64 @@
+@let f = forecast();
+
+<section 
+    class="forecast" 
+    aria-labelledby="forecast-title" 
+    [attr.aria-busy]="f.status === 'loading'">
+    <h3 
+        id="forecast-title" 
+        class="forecast-title">
+            {{ dayCount }}-day forecast
+    </h3>
+
+    @if (f.days.length) {
+        <ol class="forecast-list">
+            @for (d of f.days; track d.date) {
+                <li class="forecast-day">
+                    <div class="forecast-when">
+                        <span class="forecast-weekday">
+                            {{ d.isToday ? 'Today' : d.weekday }}
+                        </span>
+                        <span class="forecast-date">{{ d.shortDate }}</span>
+                    </div>
+
+                    <div class="forecast-icon">
+                        <app-weather-illustration [theme]="d.theme" />
+                    </div>
+
+                    <div class="forecast-summary">
+                        <span class="forecast-desc">{{ d.description }}</span>
+                        <span class="forecast-rain">
+                            <span aria-hidden="true">💧</span>
+                            {{ d.rainChance === null ? '–' : d.rainChance + '%' }}
+                            <span class="visually-hidden">chance of rain</span>
+                        </span>
+                    </div>
+
+                    <div class="forecast-temps">
+                        <strong>{{ d.max | number: '1.0-0' }}°</strong>
+                        <span class="forecast-low">
+                            {{ d.min | number: '1.0-0' }}°
+                        </span>
+                    </div>
+                </li>
+            }
+        </ol>
+    } @else if (f.status === 'error') {
+        <div class="forecast-error" role="alert">
+            <span>Forecast is unavailable right now.</span>
+            <button 
+                type="button" 
+                class="locate-btn" 
+                (click)="retry.emit()">
+                    Try again
+            </button>
+        </div>
+    } @else {
+        <p class="visually-hidden">Loading forecast…</p>
+        <div class="forecast-list" aria-hidden="true">
+            @for (p of placeholders; track p) {
+                <div class="skeleton-line forecast-skeleton"></div>
+            }
+        </div>
+    }
+</section>
