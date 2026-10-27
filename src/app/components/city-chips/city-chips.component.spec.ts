@@ -85,13 +85,12 @@ describe('CityChipsComponent', () => {
     const selected = jasmine.createSpy('selected');
     component.selected.subscribe(selected);
 
-    const tablist: HTMLElement =
-      fixture.nativeElement.querySelector('[role="tablist"]');
     const tabs: HTMLButtonElement[] = Array.from(
       fixture.nativeElement.querySelectorAll('[role="tab"]'),
     );
 
-    tablist.dispatchEvent(
+    // key presses happen on the focused tab
+    tabs[0].dispatchEvent(
       new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }),
     );
 
@@ -103,15 +102,16 @@ describe('CityChipsComponent', () => {
     const selected = jasmine.createSpy('selected');
     component.selected.subscribe(selected);
 
-    const tablist: HTMLElement =
-      fixture.nativeElement.querySelector('[role="tablist"]');
+    const tabs: HTMLButtonElement[] = Array.from(
+      fixture.nativeElement.querySelectorAll('[role="tab"]'),
+    );
 
-    tablist.dispatchEvent(
+    tabs[0].dispatchEvent(
       new KeyboardEvent('keydown', { key: 'End', bubbles: true }),
     );
     expect(selected).toHaveBeenCalledWith(2);
 
-    tablist.dispatchEvent(
+    tabs[0].dispatchEvent(
       new KeyboardEvent('keydown', { key: 'Home', bubbles: true }),
     );
     expect(selected).toHaveBeenCalledWith(1);

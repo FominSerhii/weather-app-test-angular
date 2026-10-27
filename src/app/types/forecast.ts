@@ -1,6 +1,6 @@
 import { WeatherTheme } from './weather-theme';
 
-export type ForecastSlot = {
+export interface ForecastSlot {
     dt: number; // Unix timestamp in UTC, 3-hour intervals
     main: {
         temp: number;
@@ -13,9 +13,9 @@ export type ForecastSlot = {
         icon: string;
     }[];
     pop?: number; // Probability of precipitation, 0..1
-};
+}
 
-export type ForecastResponse = {
+export interface ForecastResponse {
     list: ForecastSlot[];
     city: {
         timezone: number;
@@ -24,9 +24,9 @@ export type ForecastResponse = {
             lon: number;
         };
     };
-};
+}
 
-export type DailyForecast = {
+export interface DailyForecast {
     date: string; // 'YYYY-MM-DD', city-local
     weekday: string;
     shortDate: string;
@@ -36,17 +36,17 @@ export type DailyForecast = {
     max: number;
     min: number;
     rainChance: number | null; // Percentage
-};
+}
 
 export type ForecastStatus = 'loading' | 'ready' | 'error';
 
-export type ForecastState = {
+export interface ForecastState {
     status: ForecastStatus;
     data?: ForecastResponse;
     fetchedAt?: number;
-};
+}
 
-export type ForecastView = {
+export interface ForecastView {
     status: ForecastStatus;
     days: DailyForecast[];
-};
+}
