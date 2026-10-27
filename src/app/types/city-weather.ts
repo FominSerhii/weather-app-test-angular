@@ -1,6 +1,6 @@
 import { WeatherTheme } from './weather-theme';
 
-export type CityWeatherView = {
+export interface CityWeatherView {
   id: number;
   name: string;
   country: string;
@@ -17,4 +17,4 @@ export type CityWeatherView = {
   sunrise: string;
   sunset: string;
   theme: WeatherTheme;
-};
+}

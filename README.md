@@ -43,6 +43,7 @@ Open `http://localhost:4200/`. The app reloads automatically when you change sou
 | `npm start` | Dev server |
 | `npm run lint` | ESLint |
 | `npm test` | Unit tests (Karma) |
+| `npm test -- --watch=false --browsers=ChromeHeadless` | Single headless test run |
 | `npm run build` | Production build into `dist/` |
 
 ## Architecture
@@ -52,9 +53,10 @@ Open `http://localhost:4200/`. The app reloads automatically when you change sou
 - `utils/`: pure helpers (city parsing, weather and forecast mapping, storage)
 - `components/`: presentational standalone components; the container is `WeatherComponent`
 
-## CI
+## CI and deployment
 
-GitHub Actions runs lint, tests and build on every push to `main` and on pull requests.
+- **CI:** GitHub Actions (`.github/workflows/ci.yml`) runs lint, tests and build on every push to `main` and on pull requests.
+- **Deployment:** Cloudflare Workers Builds deploys the static build using `wrangler.jsonc`. Branch pushes get a preview URL; `main` deploys to production.
 
 ## Development server
 
@@ -67,10 +69,6 @@ Run `ng generate component component-name` to generate a new component. You can 
 ## Build
 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
 ## Running end-to-end tests
 
